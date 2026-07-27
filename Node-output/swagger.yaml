@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Weather API
-  description: "RESTful API for current weather, forecasts, and historical weather\
+  description: "ĺRESTful API for current weather, forecasts, and historical weather\
     \ data"
   version: 1.0.0
 servers:
@@ -22,6 +22,8 @@ paths:
         style: form
         explode: true
         schema:
+          maxLength: 200
+          pattern: ^.+$
           type: string
       responses:
         "200":
@@ -56,6 +58,8 @@ paths:
         style: form
         explode: true
         schema:
+          maxLength: 200
+          pattern: ^.+$
           type: string
       - name: days
         in: query
@@ -98,6 +102,8 @@ paths:
         style: form
         explode: true
         schema:
+          maxLength: 200
+          pattern: ^.+$
           type: string
       - name: date
         in: query
@@ -106,6 +112,7 @@ paths:
         style: form
         explode: true
         schema:
+          maxLength: 10
           type: string
           format: date
       responses:
@@ -139,11 +146,15 @@ components:
       type: object
       properties:
         location:
+          maxLength: 200
+          pattern: ^.+$
           type: string
         temperature:
           type: number
           format: float
         description:
+          maxLength: 500
+          pattern: ^.*$
           type: string
         humidity:
           type: integer
@@ -159,6 +170,7 @@ components:
       type: object
       properties:
         date:
+          maxLength: 10
           type: string
           format: date
         temperatureHigh:
@@ -168,6 +180,8 @@ components:
           type: number
           format: float
         description:
+          maxLength: 500
+          pattern: ^.*$
           type: string
     Forecast:
       required:
@@ -176,6 +190,8 @@ components:
       type: object
       properties:
         location:
+          maxLength: 200
+          pattern: ^.+$
           type: string
         days:
           type: array
@@ -191,8 +207,11 @@ components:
       type: object
       properties:
         location:
+          maxLength: 200
+          pattern: ^.+$
           type: string
         date:
+          maxLength: 10
           type: string
           format: date
         temperatureHigh:
@@ -202,6 +221,8 @@ components:
           type: number
           format: float
         description:
+          maxLength: 500
+          pattern: ^.*$
           type: string
     Error:
       required:
@@ -212,6 +233,8 @@ components:
         code:
           type: integer
         message:
+          maxLength: 1000
+          pattern: ^.*$
           type: string
   securitySchemes:
     ApiKeyAuth:
