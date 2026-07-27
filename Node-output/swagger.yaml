@@ -1,0 +1,219 @@
+openapi: 3.0.0
+info:
+  title: Weather API
+  description: "RESTful API for current weather, forecasts, and historical weather\
+    \ data"
+  version: 1.0.0
+servers:
+- url: /
+security:
+- ApiKeyAuth: []
+paths:
+  /weather/current:
+    get:
+      summary: Get current weather data
+      operationId: getCurrentWeather
+      parameters:
+      - name: location
+        in: query
+        description: Location to get current weather for
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Current weather data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentWeather"
+        "400":
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      deprecated: true
+      security: []
+  /weather/forecast:
+    get:
+      summary: Get weather forecast data
+      operationId: getWeatherForecast
+      parameters:
+      - name: location
+        in: query
+        description: Location to get forecast for
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: days
+        in: query
+        description: Number of days to forecast (default is 7)
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 14
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          description: Weather forecast data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forecast"
+        "400":
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /weather/historical:
+    get:
+      summary: Get historical weather data
+      operationId: getHistoricalWeather
+      parameters:
+      - name: location
+        in: query
+        description: Location to get historical data for
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: Date for historical data (YYYY-MM-DD)
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: Historical weather data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoricalWeather"
+        "400":
+          description: Bad request - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Location or date not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    CurrentWeather:
+      required:
+      - description
+      - humidity
+      - location
+      - temperature
+      - windSpeed
+      type: object
+      properties:
+        location:
+          type: string
+        temperature:
+          type: number
+          format: float
+        description:
+          type: string
+        humidity:
+          type: integer
+        windSpeed:
+          type: number
+          format: float
+    ForecastDay:
+      required:
+      - date
+      - description
+      - temperatureHigh
+      - temperatureLow
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        temperatureHigh:
+          type: number
+          format: float
+        temperatureLow:
+          type: number
+          format: float
+        description:
+          type: string
+    Forecast:
+      required:
+      - days
+      - location
+      type: object
+      properties:
+        location:
+          type: string
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/ForecastDay"
+    HistoricalWeather:
+      required:
+      - date
+      - description
+      - location
+      - temperatureHigh
+      - temperatureLow
+      type: object
+      properties:
+        location:
+          type: string
+        date:
+          type: string
+          format: date
+        temperatureHigh:
+          type: number
+          format: float
+        temperatureLow:
+          type: number
+          format: float
+        description:
+          type: string
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
